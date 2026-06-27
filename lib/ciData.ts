@@ -33,10 +33,10 @@ export interface EmiTypeConfig {
   metaDescription: string;
 
   // Loan Limits
-  minAmount: number;
-  maxAmount: number;
-  defaultAmount: number;
-  step: number;
+  minPrincipal: number;
+  maxPrincipal: number;
+  defaultPrincipal: number;
+  stepPrincipal: number;
 
   // Interest Rate
   minRate: number;
@@ -89,10 +89,10 @@ export const ciConfig: Record<CiType, EmiTypeConfig> = {
       "online compound interest calculator 2025",
     ],
 
-    minAmount: 1000,
-    maxAmount: 10000000,
-    defaultAmount: 100000,
-    step: 1000,
+    minPrincipal: 1000,
+    maxPrincipal: 10000000,
+    defaultPrincipal: 100000,
+    stepPrincipal: 1000,
 
     minRate: 1,
     maxRate: 30,
@@ -236,10 +236,10 @@ export const ciConfig: Record<CiType, EmiTypeConfig> = {
       "simple interest vs compound interest",
     ],
 
-    minAmount: 1000,
-    maxAmount: 10000000,
-    defaultAmount: 100000,
-    step: 1000,
+    minPrincipal: 1000,
+    maxPrincipal: 10000000,
+    defaultPrincipal: 100000,
+    stepPrincipal: 1000,
 
     minRate: 1,
     maxRate: 30,
@@ -328,10 +328,10 @@ export const ciConfig: Record<CiType, EmiTypeConfig> = {
       "investment return calculator",
     ],
 
-    minAmount: 1000,
-    maxAmount: 10000000,
-    defaultAmount: 100000,
-    step: 1000,
+    minPrincipal: 1000,
+    maxPrincipal: 10000000,
+    defaultPrincipal: 100000,
+    stepPrincipal: 1000,
 
     minRate: 0, // CAGR calculated from values
     maxRate: 100,
@@ -416,10 +416,10 @@ export const ciConfig: Record<CiType, EmiTypeConfig> = {
       "future value inflation calculator",
     ],
 
-    minAmount: 1000,
-    maxAmount: 10000000,
-    defaultAmount: 100000,
-    step: 1000,
+    minPrincipal: 1000,
+    maxPrincipal: 10000000,
+    defaultPrincipal: 100000,
+    stepPrincipal: 1000,
 
     minRate: 1,
     maxRate: 20,
