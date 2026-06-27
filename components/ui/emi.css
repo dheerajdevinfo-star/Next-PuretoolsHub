@@ -1,0 +1,376 @@
+/* ─── EMI Calculator ─────────────────────────────── */
+
+.emi_wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .emi_wrapper {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Card ── */
+.emi_card {
+  background: var(--color-bg-primary, #fff);
+  border: 0.5px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.emi_card_title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary, #1A1A1A);
+  margin-bottom: 20px;
+}
+
+/* ── Sliders ── */
+.slider_group {
+  margin-bottom: 20px;
+}
+
+.slider_top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.slider_label {
+  font-size: 13px;
+  color: #6B7280;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.slider_val {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1A1A1A;
+  background: #F5F5F0;
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+/* Range slider */
+.emi_range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: #E5E7EB;
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+}
+
+.emi_range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #ffffff;
+  border: 2px solid #1D9E75;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  transition: transform 0.1s;
+  margin-top: -8px;
+}
+
+.emi_range::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.emi_range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #ffffff;
+  border: 2px solid #1D9E75;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -8px;
+}
+
+/* Track fill color */
+.emi_range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+}
+
+.range_hints {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #9CA3AF;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+/* Bank select */
+.bank_select {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 0.5px solid #D1D5DB;
+  font-size: 13px;
+  background: #ffffff;
+  color: #1A1A1A;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+.bank_select:focus {
+  border-color: #1D9E75;
+}
+
+/* Calculate button */
+.calc_btn {
+  width: 100%;
+  padding: 12px;
+  background: #1D9E75;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.15s;
+}
+
+.calc_btn:hover {
+  background: #178A64;
+}
+
+.calc_btn:active {
+  transform: scale(0.99);
+}
+
+/* ── Result metrics ── */
+.result_metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 16px;
+}
+
+.metric {
+  background: #F5F5F0;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.metric_accent {
+  background: #E1F5EE;
+  grid-column: 1 / -1;
+}
+
+.metric_full {
+  grid-column: 1 / -1;
+}
+
+.metric_label {
+  font-size: 11px;
+  color: #6B7280;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.metric_value {
+  font-size: 18px;
+  font-weight: 500;
+  color: #1A1A1A;
+}
+
+.metric_large {
+  font-size: 26px;
+  color: #0F6E56;
+}
+
+/* ── Donut ── */
+.donut_row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.legend {
+  flex: 1;
+}
+
+.legend_item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #6B7280;
+  margin-bottom: 8px;
+}
+
+.legend_dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend_val {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 500;
+  color: #1A1A1A;
+}
+
+/* ── Year table ── */
+.year_table {
+  width: 100%;
+  font-size: 12px;
+  border-collapse: collapse;
+}
+
+.year_table th {
+  font-size: 11px;
+  color: #6B7280;
+  font-weight: 500;
+  padding: 7px 0;
+  border-bottom: 0.5px solid #E5E7EB;
+  text-align: left;
+}
+
+.year_table td {
+  padding: 7px 0;
+  border-bottom: 0.5px solid #F3F4F6;
+  color: #1A1A1A;
+  font-weight: 500;
+}
+
+.td_green {
+  color: #0F6E56;
+}
+
+/* ── FAQ ── */
+.seo_section {
+  padding: 24px 20px;
+  border-top: 0.5px solid #E5E7EB;
+}
+
+.seo_section h2 {
+  font-size: 17px;
+  font-weight: 500;
+  color: #1A1A1A;
+  margin-bottom: 10px;
+}
+
+.seo_section p {
+  font-size: 13px;
+  color: #6B7280;
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
+
+.faq_item {
+  border-top: 0.5px solid #E5E7EB;
+  padding: 13px 0;
+}
+
+.faq_q {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1A1A1A;
+  margin-bottom: 6px;
+}
+
+.faq_a {
+  font-size: 12px;
+  color: #6B7280;
+  line-height: 1.7;
+}
+
+/* ── Related tools ── */
+.related_section {
+  padding: 20px;
+  border-top: 0.5px solid #E5E7EB;
+}
+
+.related_section h3 {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1A1A1A;
+  margin-bottom: 12px;
+}
+
+.related_grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.sdc_flex_box {
+  gap: 15px;
+  width: 100%;
+  display: flex;
+  margin-top: 17px;
+  align-items: center;
+  justify-content: center;
+}
+
+.sdc_flex_box button {
+  font-size: 15px;
+  padding: 5px 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: 0.3s all;
+  border: 1px solid var(--border);
+}
+
+.sdc_flex_box button svg{
+  width: 13px;
+}
+
+.sdc_flex_box button:hover{
+  color: var(--green);
+  background-color: rgb(225, 245, 238);
+  border-color: var(--green);
+}
+
+
+@media (max-width: 768px) {
+  .related_grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.related_card {
+  border: 0.5px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 13px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1A1A1A;
+  text-decoration: none;
+  display: block;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.related_card:hover {
+  border-color: #1D9E75;
+  color: #1D9E75;
+}
