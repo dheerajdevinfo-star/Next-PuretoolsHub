@@ -36,14 +36,12 @@ const Navbar = () => {
             <Link href="/finance">Finance</Link>
           </li>
           <li> 
-            <Link href="/health">Health</Link>
+            <Link href="/about">About</Link>
           </li>
           <li>
-            <Link href="/math">Math</Link>
+            <Link href="/contact">Support</Link>
           </li>
-          <li>
-            <Link href="/tax">Tax</Link>
-          </li>
+           
         </ul> 
       </nav>
     </header>
