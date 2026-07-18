@@ -4,30 +4,42 @@ import Faq from "@/components/ui/Faq"
 import RelatedTools from "@/components/ui/RelatedTools"
 import HRACalculator from "@/components/ui/HRACalculator"
 import { hraConfig } from "@/lib/hraData"
+import { generateHraSchema } from "@/lib/generateSchema"
 
 const config = hraConfig["hra"]
 
 export const metadata = {
-  title: config.title,
-  description: config.description,
+  title: config.metaTitle,
+  description: config.metaDescription,
   keywords: config.keywords,
+  alternates: {
+    canonical: "https://puretoolshub.com/finance/hra",
+  },
 }
 
-const hraCards = [
-  { slug: "hra-exemption",   emoji: "🧾", key: "hra-exemption"   as const },
-  { slug: "rent-receipt",    emoji: "🏠", key: "rent-receipt"    as const },
-  { slug: "hra-tax-benefit", emoji: "💰", key: "hra-tax-benefit" as const },
-]
+ 
 
 export default function HRAIndexPage() {
   const faqData = config.faqs.map(f => ({ question: f.q, answer: f.a }))
   const relatedToolsData = config.relatedTools.map(t => ({
-    title: t.label, description: t.label, link: t.href,
+    title: t.label,
+    description: t.description,
+    link: t.href,
   }))
+
+  const schemas = generateHraSchema(config, "https://puretoolshub.com/finance/hra")
 
   return (
     <>
       <Breadcrumb />
+
+      {schemas.map((schema, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
 
       <section className="heding_section">
         <div className="max-width">
@@ -42,22 +54,17 @@ export default function HRAIndexPage() {
         </div>
       </section>
 
-      <section>
+       
+
+      {/* 👇 Dynamic content blocks — driven entirely by hraConfig */}
+      <section className="calculator_content">
         <div className="max-width">
-          <h2 className="subtitle">Aur HRA tools</h2>
-          <div className="emi_index_grid">
-            {hraCards.map(({ slug, emoji, key }) => {
-              const c = hraConfig[key]
-              return (
-                <Link href={`/finance/hra/${slug}`} key={slug} className="emi_index_card">
-                  <span className="emi_index_emoji">{emoji}</span>
-                  <h2 className="emi_index_title">{c.title}</h2>
-                  <p className="emi_index_desc">{c.description}</p>
-                  <span className="emi_index_cta">Calculate karein →</span>
-                </Link>
-              )
-            })}
-          </div>
+          {config.content.map((section, i) => (
+            <div key={i} className="content_block">
+              <h2>{section.heading}</h2>
+              <div dangerouslySetInnerHTML={{ __html: section.body }} />
+            </div>
+          ))}
         </div>
       </section>
 

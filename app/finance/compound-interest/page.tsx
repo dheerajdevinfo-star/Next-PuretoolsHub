@@ -17,11 +17,7 @@ export const metadata = {
   },
 }
 
-const ciCards = [
-  { slug: "simple-interest", emoji: "📊", key: "simple-interest" as const },
-  { slug: "cagr",            emoji: "📈", key: "cagr"            as const },
-  { slug: "inflation",       emoji: "💸", key: "inflation"       as const },
-]
+ 
 
 export default function CIIndexPage() {
   const faqData = config.faqs.map(f => ({ question: f.q, answer: f.a }))
@@ -58,24 +54,7 @@ export default function CIIndexPage() {
         </div>
       </section>
 
-      <section>
-        <div className="max-width">
-          <h2 className="subtitle">Related calculators</h2>
-          <div className="emi_index_grid">
-            {ciCards.map(({ slug, emoji, key }) => {
-              const c = ciConfig[key]
-              return (
-                <Link href={`/finance/compound-interest/${slug}`} key={slug} className="emi_index_card">
-                  <span className="emi_index_emoji">{emoji}</span>
-                  <h2 className="emi_index_title">{c.title}</h2>
-                  <p className="emi_index_desc">{c.description}</p>
-                  <span className="emi_index_cta">Calculate karein →</span>
-                </Link>
-              )
-            })}
-          </div>
-        </div>
-      </section>
+       
 
       {/* 👇 Dynamic content blocks — driven entirely by ciConfig */}
       <section className="calculator_content">
@@ -91,14 +70,14 @@ export default function CIIndexPage() {
 
       <section className="calculator_faq">
         <div className="max-width">
-          <h2 className="hpme_faq_h2">Aksar puchhe jaane wale sawaal</h2>
+          <h2 className="hpme_faq_h2">FAQ's</h2>
           <Faq title={config.title} description={config.description} faqs={faqData} />
         </div>
       </section>
 
       <section className="related_tools">
         <div className="max-width">
-          <h2 className="subtitle">Aur calculators</h2>
+          <h2 className="subtitle">Related calculators</h2>
           <RelatedTools tools={relatedToolsData} />
         </div>
       </section>

@@ -4,32 +4,41 @@ import Faq from "@/components/ui/Faq"
 import RelatedTools from "@/components/ui/RelatedTools"
 import SIPCalculator from "@/components/ui/SIPCalculator"
 import { sipConfig } from "@/lib/sipData"
+import { generateSipSchema } from "@/lib/generateSchema"
 
 const config = sipConfig["sip"]
 
 export const metadata = {
-  title: config.title,
-  description: config.description,
+  title: config.metaTitle,
+  description: config.metaDescription,
   keywords: config.keywords,
+  alternates: {
+    canonical: "https://puretoolshub.com/finance/sip",
+  },
 }
 
-const sipCards = [
-  { slug: "lumpsum", emoji: "💰", key: "lumpsum" as const },
-  { slug: "step-up", emoji: "📈", key: "step-up" as const },
-  { slug: "swp",     emoji: "💸", key: "swp"     as const },
-]
-
+ 
 export default function SIPIndexPage() {
   const faqData = config.faqs.map(f => ({ question: f.q, answer: f.a }))
   const relatedToolsData = config.relatedTools.map(t => ({
     title: t.label,
-    description: t.label,
+    description: t.description,
     link: t.href,
   }))
+
+  const schemas = generateSipSchema(config, "https://puretoolshub.com/finance/sip")
 
   return (
     <>
       <Breadcrumb />
+
+      {schemas.map((schema, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
 
       <section className="heding_section">
         <div className="max-width">
@@ -44,23 +53,17 @@ export default function SIPIndexPage() {
         </div>
       </section>
 
-      {/* Related SIP tools cards */}
-      <section>
+      
+
+      {/* 👇 Dynamic content blocks — driven entirely by sipConfig */}
+      <section className="calculator_content">
         <div className="max-width">
-          <h2 className="subtitle">Aur calculators dekhein</h2>
-          <div className="emi_index_grid">
-            {sipCards.map(({ slug, emoji, key }) => {
-              const c = sipConfig[key]
-              return (
-                <Link href={`/finance/sip/${slug}`} key={slug} className="emi_index_card">
-                  <span className="emi_index_emoji">{emoji}</span>
-                  <h2 className="emi_index_title">{c.title}</h2>
-                  <p className="emi_index_desc">{c.description}</p>
-                  <span className="emi_index_cta">Calculate karein →</span>
-                </Link>
-              )
-            })}
-          </div>
+          {config.content.map((section, i) => (
+            <div key={i} className="content_block">
+              <h2>{section.heading}</h2>
+              <div dangerouslySetInnerHTML={{ __html: section.body }} />
+            </div>
+          ))}
         </div>
       </section>
 

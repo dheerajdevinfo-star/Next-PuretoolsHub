@@ -103,14 +103,24 @@ type Props = { sipType: SipType }
 export default function SIPCalculator({ sipType }: Props) {
   const config = sipConfig[sipType]
 
-  const [amount, setAmount]   = useState(config.defaultAmount)
-  const [rate, setRate]       = useState(config.defaultRate)
-  const [tenure, setTenure]   = useState(config.defaultTenure)
-  const [stepUp, setStepUp]   = useState(
-    "defaultStepUp" in config ? config.defaultStepUp : 10
+  const [amount, setAmount] = useState(config.defaultAmount)
+
+  const [rate, setRate] = useState(config.defaultRate)
+  const [tenure, setTenure] = useState(config.defaultTenure)
+
+
+  // const [stepUp, setStepUp]   = useState(
+  //   "defaultStepUp" in config ? config.defaultStepUp : 10
+  // )
+  // const [withdrawal, setWithdrawal] = useState(
+  //   "defaultWithdrawal" in config ? config.defaultWithdrawal : 10000
+  // )
+
+  const [stepUp, setStepUp] = useState<number>(
+    "defaultStepUp" in config ? (config.defaultStepUp ?? 10) : 10
   )
-  const [withdrawal, setWithdrawal] = useState(
-    "defaultWithdrawal" in config ? config.defaultWithdrawal : 10000
+  const [withdrawal, setWithdrawal] = useState<number>(
+    "defaultWithdrawal" in config ? (config.defaultWithdrawal ?? 10000) : 10000
   )
 
   const [results, setResults] = useState({

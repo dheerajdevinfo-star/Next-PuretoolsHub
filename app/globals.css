@@ -556,7 +556,7 @@ header nav ul li a:hover {
   margin-top: 10px;
 }
 
-.content_block ol{
+.content_block ol {
   margin-top: 10px;
   padding-left: 20px;
   list-style: auto;
@@ -694,6 +694,10 @@ header nav ul li a:hover {
   .copyright {
     gap: 5px;
     flex-direction: column;
+  }
+
+  .sdc_flex_box button{
+    font-size: 0px!important;
   }
 
 }

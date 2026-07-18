@@ -4,31 +4,42 @@ import Faq from "@/components/ui/Faq"
 import RelatedTools from "@/components/ui/RelatedTools"
 import IncomeTaxCalculator from "@/components/ui/IncomeTaxCalculator"
 import { taxConfig } from "@/lib/incomeTaxData"
+import { generateTaxSchema } from "@/lib/generateSchema"
 
 const config = taxConfig["income-tax"]
 
 export const metadata = {
-  title: config.title,
-  description: config.description,
+  title: config.metaTitle,
+  description: config.metaDescription,
   keywords: config.keywords,
+  alternates: {
+    canonical: "https://puretoolshub.com/finance/income-tax",
+  },
 }
 
-const taxCards = [
-  { slug: "old-vs-new-regime", emoji: "⚖️", key: "old-vs-new-regime" as const },
-  { slug: "tds-calculator",    emoji: "🧾", key: "tds-calculator"    as const },
-  { slug: "advance-tax",       emoji: "📅", key: "advance-tax"       as const },
-  { slug: "tax-slab",          emoji: "📊", key: "tax-slab"          as const },
-]
+ 
 
 export default function IncomeTaxIndexPage() {
   const faqData = config.faqs.map(f => ({ question: f.q, answer: f.a }))
   const relatedToolsData = config.relatedTools.map(t => ({
-    title: t.label, description: t.label, link: t.href,
+    title: t.label,
+    description: t.description,
+    link: t.href,
   }))
+
+  const schemas = generateTaxSchema(config, "https://puretoolshub.com/finance/income-tax")
 
   return (
     <>
       <Breadcrumb />
+
+      {schemas.map((schema, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
 
       <section className="heding_section">
         <div className="max-width">
@@ -43,22 +54,17 @@ export default function IncomeTaxIndexPage() {
         </div>
       </section>
 
-      <section>
+       
+
+      {/* 👇 Dynamic content blocks — driven entirely by taxConfig */}
+      <section className="calculator_content">
         <div className="max-width">
-          <h2 className="subtitle">Aur tax calculators</h2>
-          <div className="emi_index_grid">
-            {taxCards.map(({ slug, emoji, key }) => {
-              const c = taxConfig[key]
-              return (
-                <Link href={`/finance/income-tax/${slug}`} key={slug} className="emi_index_card">
-                  <span className="emi_index_emoji">{emoji}</span>
-                  <h2 className="emi_index_title">{c.title}</h2>
-                  <p className="emi_index_desc">{c.description}</p>
-                  <span className="emi_index_cta">Calculate karein →</span>
-                </Link>
-              )
-            })}
-          </div>
+          {config.content.map((section, i) => (
+            <div key={i} className="content_block">
+              <h2>{section.heading}</h2>
+              <div dangerouslySetInnerHTML={{ __html: section.body }} />
+            </div>
+          ))}
         </div>
       </section>
 

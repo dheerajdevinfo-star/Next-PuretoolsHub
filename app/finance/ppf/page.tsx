@@ -4,31 +4,41 @@ import Faq from "@/components/ui/Faq"
 import RelatedTools from "@/components/ui/RelatedTools"
 import PPFCalculator from "@/components/ui/PPFCalculator"
 import { ppfConfig } from "@/lib/ppfData"
+import { generatePpfSchema } from "@/lib/generateSchema"
 
 const config = ppfConfig["ppf"]
 
 export const metadata = {
-  title: config.title,
-  description: config.description,
+  title: config.metaTitle,
+  description: config.metaDescription,
   keywords: config.keywords,
+  alternates: {
+    canonical: "https://puretoolshub.com/finance/ppf",
+  },
 }
 
-const ppfCards = [
-  { slug: "ppf-withdrawal",          emoji: "💸", key: "ppf-withdrawal"          as const },
-  { slug: "ppf-interest-calculator", emoji: "📈", key: "ppf-interest-calculator" as const },
-  { slug: "ppf-vs-fd",               emoji: "⚖️", key: "ppf-vs-fd"               as const },
-  { slug: "ppf-extension",           emoji: "🔄", key: "ppf-extension"           as const },
-]
-
+ 
 export default function PPFIndexPage() {
   const faqData = config.faqs.map(f => ({ question: f.q, answer: f.a }))
   const relatedToolsData = config.relatedTools.map(t => ({
-    title: t.label, description: t.label, link: t.href,
+    title: t.label,
+    description: t.description,
+    link: t.href,
   }))
+
+  const schemas = generatePpfSchema(config, "https://puretoolshub.com/finance/ppf")
 
   return (
     <>
       <Breadcrumb />
+
+      {schemas.map((schema, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
 
       <section className="heding_section">
         <div className="max-width">
@@ -43,22 +53,17 @@ export default function PPFIndexPage() {
         </div>
       </section>
 
-      <section>
+     
+
+      {/* 👇 Dynamic content blocks — driven entirely by ppfConfig */}
+      <section className="calculator_content">
         <div className="max-width">
-          <h2 className="subtitle">Aur PPF tools</h2>
-          <div className="emi_index_grid">
-            {ppfCards.map(({ slug, emoji, key }) => {
-              const c = ppfConfig[key]
-              return (
-                <Link href={`/finance/ppf/${slug}`} key={slug} className="emi_index_card">
-                  <span className="emi_index_emoji">{emoji}</span>
-                  <h2 className="emi_index_title">{c.title}</h2>
-                  <p className="emi_index_desc">{c.description}</p>
-                  <span className="emi_index_cta">Calculate karein →</span>
-                </Link>
-              )
-            })}
-          </div>
+          {config.content.map((section, i) => (
+            <div key={i} className="content_block">
+              <h2>{section.heading}</h2>
+              <div dangerouslySetInnerHTML={{ __html: section.body }} />
+            </div>
+          ))}
         </div>
       </section>
 

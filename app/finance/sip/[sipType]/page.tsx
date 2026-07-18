@@ -1,34 +1,41 @@
 import SIPCalculator from "@/components/ui/SIPCalculator"
 import { sipConfig, slugToSipType, validSipSlugs } from "@/lib/sipData"
 import { notFound } from "next/navigation"
+import type { Metadata } from "next"
 import Breadcrumb from "@/components/ui/Breadcrumb"
 import Faq from "@/components/ui/Faq"
 import RelatedTools from "@/components/ui/RelatedTools"
+import { generateSipSchema } from "@/lib/generateSchema"
 
 type Props = {
   params: Promise<{ sipType: string }>
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { sipType } = await params
   const key = slugToSipType[sipType]
-  const config = sipConfig[key]
+  const config = key ? sipConfig[key] : undefined
   if (!config) return {}
 
   return {
-    title: config.title,
-    description: config.description,
+    title: config.metaTitle,
+    description: config.metaDescription,
     keywords: config.keywords,
+    alternates: {
+      canonical: `https://puretoolshub.com/finance/sip/${sipType}`,
+    },
     openGraph: {
-      title: config.title,
-      description: config.description,
-      url: `https://puretoolhub.com/finance/sip/${sipType}`,
+      title: config.metaTitle,
+      description: config.metaDescription,
+      url: `https://puretoolshub.com/finance/sip/${sipType}`,
     },
   }
 }
 
 export function generateStaticParams() {
-  return validSipSlugs.map(slug => ({ sipType: slug }))
+  return validSipSlugs
+    .filter((slug) => slug !== "sip")
+    .map((slug) => ({ sipType: slug }))
 }
 
 export default async function SipPage({ params }: Props) {
@@ -38,16 +45,29 @@ export default async function SipPage({ params }: Props) {
   const key = slugToSipType[sipType]
   const config = sipConfig[key]
 
-  const faqData = config.faqs.map(f => ({ question: f.q, answer: f.a }))
-  const relatedToolsData = config.relatedTools.map(t => ({
+  const faqData = config.faqs.map((f) => ({ question: f.q, answer: f.a }))
+  const relatedToolsData = config.relatedTools.map((t) => ({
     title: t.label,
-    description: t.label,
+    description: t.description,
     link: t.href,
   }))
+
+  const schemas = generateSipSchema(
+    config,
+    `https://puretoolshub.com/finance/sip/${sipType}`
+  )
 
   return (
     <>
       <Breadcrumb />
+
+      {schemas.map((schema, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
 
       <section className="heding_section">
         <div className="max-width">
@@ -59,6 +79,18 @@ export default async function SipPage({ params }: Props) {
       <section>
         <div className="max-width">
           <SIPCalculator sipType={key} />
+        </div>
+      </section>
+
+      {/* 👇 Dynamic content blocks — driven entirely by sipConfig */}
+      <section className="calculator_content">
+        <div className="max-width">
+          {config.content.map((section, i) => (
+            <div key={i} className="content_block">
+              <h2>{section.heading}</h2>
+              <div dangerouslySetInnerHTML={{ __html: section.body }} />
+            </div>
+          ))}
         </div>
       </section>
 

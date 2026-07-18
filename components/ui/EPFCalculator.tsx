@@ -20,16 +20,14 @@ function calcEPF(
   annualRate:    number,
   annualHike:    number = 5
 ) {
-  const years         = retireAge - currentAge
-  const monthlyRate   = annualRate / 12 / 100
-  const empContrib    = monthlySalary * 0.12
-  const empContribEPF = monthlySalary * 0.0367  // employer EPF only (3.67%)
+  const years       = retireAge - currentAge
+  const monthlyRate = annualRate / 12 / 100
 
-  let balance         = 0
-  let totalEmployee   = 0
-  let totalEmployer   = 0
-  let totalInterest   = 0
-  let currentSalary   = monthlySalary
+  let balance       = 0
+  let totalEmployee = 0
+  let totalEmployer = 0
+  let totalInterest = 0
+  let currentSalary = monthlySalary
   const yearlyData: {
     year: number; salary: number; empContrib: number;
     empyrContrib: number; interest: number; balance: number
@@ -41,23 +39,23 @@ function calcEPF(
     let yearInterest  = 0
 
     for (let m = 1; m <= 12; m++) {
-      balance       += monthlyEmp + monthlyEmpr
-      yearInterest  += balance * monthlyRate
+      balance      += monthlyEmp + monthlyEmpr
+      yearInterest += balance * monthlyRate
     }
 
-    balance        += yearInterest
-    totalEmployee  += monthlyEmp * 12
-    totalEmployer  += monthlyEmpr * 12
-    totalInterest  += yearInterest
+    balance       += yearInterest
+    totalEmployee += monthlyEmp * 12
+    totalEmployer += monthlyEmpr * 12
+    totalInterest += yearInterest
 
     if (y === 1 || y === Math.ceil(years / 2) || y === years) {
       yearlyData.push({
-        year:        y,
-        salary:      Math.round(currentSalary),
-        empContrib:  Math.round(monthlyEmp * 12),
+        year:         y,
+        salary:       Math.round(currentSalary),
+        empContrib:   Math.round(monthlyEmp * 12),
         empyrContrib: Math.round(monthlyEmpr * 12),
-        interest:    Math.round(yearInterest),
-        balance:     Math.round(balance),
+        interest:     Math.round(yearInterest),
+        balance:      Math.round(balance),
       })
     }
 
@@ -75,34 +73,43 @@ function calcEPF(
   }
 }
 
-// EPS Pension formula
 function calcEPS(salary: number, serviceYears: number) {
-  const pensionableSalary  = Math.min(salary, 15000) // max ₹15,000
-  const pension            = (pensionableSalary * serviceYears) / 70
-  const minPension         = 1000
+  const pensionableSalary = Math.min(salary, 15000)
+  const pension           = (pensionableSalary * serviceYears) / 70
+  const minPension        = 1000
   return {
-    monthlyPension: Math.max(Math.round(pension), minPension),
+    monthlyPension:   Math.max(Math.round(pension), minPension),
     pensionableSalary,
-    annualPension:  Math.max(Math.round(pension), minPension) * 12,
+    annualPension:    Math.max(Math.round(pension), minPension) * 12,
   }
 }
 
-// Withdrawal calculation
-function calcWithdrawal(
-  balance: number,
-  serviceYears: number,
-  taxSlab: number
-) {
-  const isTaxFree  = serviceYears >= 5
-  const taxAmount  = isTaxFree ? 0 : balance * taxSlab / 100 * 1.04
-  const netAmount  = balance - taxAmount
+function calcWithdrawal(balance: number, serviceYears: number, taxSlab: number) {
+  const isTaxFree = serviceYears >= 5
+  const taxAmount = isTaxFree ? 0 : balance * taxSlab / 100 * 1.04
+  const netAmount = balance - taxAmount
+  return {
+    isTaxFree,
+    taxAmount,
+    netAmount,
+    homeLoan:  balance * 0.90,
+    medical:   balance * 0.50,
+    education: balance * 0.50,
+  }
+}
 
-  // Partial withdrawal limits
-  const homeLoan   = balance * 0.90  // 90% for home
-  const medical    = balance * 0.50  // 50% for medical
-  const education  = balance * 0.50  // 50% for education
+// ─── Slider background util ───────────────────────────────────
 
-  return { isTaxFree, taxAmount, netAmount, homeLoan, medical, education }
+function updateSliderBg(el: HTMLInputElement) {
+  const min = Number(el.min)
+  const max = Number(el.max)
+  const val = Number(el.value)
+  const pct = ((val - min) / (max - min)) * 100
+  el.style.background = `linear-gradient(to right, #1D9E75 ${pct}%, #E5E7EB ${pct}%)`
+}
+
+function handleSliderInput(e: React.ChangeEvent<HTMLInputElement>) {
+  updateSliderBg(e.target)
 }
 
 // ─── Component ───────────────────────────────────────────────
@@ -112,14 +119,14 @@ type Props = { epfType: EpfType }
 export default function EPFCalculator({ epfType }: Props) {
   const config = epfConfig[epfType]
 
-  const [salary,       setSalary]       = useState(config.defaultSalary)
-  const [currentAge,   setCurrentAge]   = useState(config.defaultAge)
-  const [retireAge,    setRetireAge]    = useState(config.defaultRetire)
-  const [rate,         setRate]         = useState(config.defaultRate)
-  const [annualHike,   setAnnualHike]   = useState(5)
-  const [serviceYears, setServiceYears] = useState(10)
-  const [currentBalance, setCurrentBalance] = useState(500000)
-  const [taxSlab,      setTaxSlab]      = useState(20)
+  const [salary,          setSalary]          = useState(config.defaultSalary)
+  const [currentAge,      setCurrentAge]      = useState(config.defaultAge)
+  const [retireAge,       setRetireAge]       = useState(config.defaultRetire)
+  const [rate,            setRate]            = useState(config.defaultRate)
+  const [annualHike,      setAnnualHike]      = useState(5)
+  const [serviceYears,    setServiceYears]    = useState(10)
+  const [currentBalance,  setCurrentBalance]  = useState(500000)
+  const [taxSlab,         setTaxSlab]         = useState(20)
 
   const [results, setResults] = useState(
     calcEPF(config.defaultSalary, config.defaultAge, config.defaultRetire, config.defaultRate)
@@ -132,40 +139,19 @@ export default function EPFCalculator({ epfType }: Props) {
   )
 
   useEffect(() => {
-    const r  = calcEPF(salary, currentAge, retireAge, rate, annualHike)
-    const ep = calcEPS(salary, retireAge - currentAge)
-    const wr = calcWithdrawal(currentBalance, serviceYears, taxSlab)
-    setResults(r)
-    setEpsResults(ep)
-    setWithdrawalResults(wr)
+    setResults(calcEPF(salary, currentAge, retireAge, rate, annualHike))
+    setEpsResults(calcEPS(salary, retireAge - currentAge))
+    setWithdrawalResults(calcWithdrawal(currentBalance, serviceYears, taxSlab))
   }, [salary, currentAge, retireAge, rate, annualHike, serviceYears, currentBalance, taxSlab])
 
+  // Init slider backgrounds on mount only
   useEffect(() => {
-    const sliders = document.querySelectorAll<HTMLInputElement>(".emi_range")
-    sliders.forEach(el => {
-      const min = Number(el.min), max = Number(el.max), val = Number(el.value)
-      const pct = ((val - min) / (max - min)) * 100
-      el.style.background = `linear-gradient(to right, #1D9E75 ${pct}%, #E5E7EB ${pct}%)`
-    })
-  }, [salary, currentAge, retireAge, rate, annualHike, serviceYears, currentBalance])
+    document.querySelectorAll<HTMLInputElement>(".emi_range").forEach(updateSliderBg)
+  }, [epfType])
 
   const investedPct   = results.maturityAmount > 0
     ? Math.round((results.totalInvested / results.maturityAmount) * 100) : 0
   const circumference = 2 * Math.PI * 30
-
-  // Shared salary slider
-  const SalarySlider = () => (
-    <div className="slider_group">
-      <div className="slider_top">
-        <span className="slider_label">Basic + DA salary (monthly)</span>
-        <span className="slider_val">{formatINR(salary)}</span>
-      </div>
-      <input type="range" min={5000} max={200000} step={1000}
-        value={salary} onChange={e => setSalary(Number(e.target.value))}
-        className="emi_range" />
-      <div className="range_hints"><span>₹5K</span><span>₹2 lakh</span></div>
-    </div>
-  )
 
   // ── EPF Balance Check UI ──
   if (epfType === "epf-balance-check") {
@@ -176,16 +162,33 @@ export default function EPFCalculator({ epfType }: Props) {
             <SlidersHorizontal size={16} color="#1D9E75" />
             Balance estimate karein
           </h2>
-          <SalarySlider />
+
+          {/* Salary — inline */}
+          <div className="slider_group">
+            <div className="slider_top">
+              <span className="slider_label">Basic + DA salary (monthly)</span>
+              <span className="slider_val">{formatINR(salary)}</span>
+            </div>
+            <input
+              type="range" min={5000} max={200000} step={1000}
+              value={salary}
+              onChange={e => { setSalary(Number(e.target.value)); handleSliderInput(e) }}
+              className="emi_range"
+            />
+            <div className="range_hints"><span>₹5K</span><span>₹2 lakh</span></div>
+          </div>
 
           <div className="slider_group">
             <div className="slider_top">
               <span className="slider_label">Current age</span>
               <span className="slider_val">{currentAge} years</span>
             </div>
-            <input type="range" min={18} max={57} step={1}
-              value={currentAge} onChange={e => setCurrentAge(Number(e.target.value))}
-              className="emi_range" />
+            <input
+              type="range" min={18} max={57} step={1}
+              value={currentAge}
+              onChange={e => { setCurrentAge(Number(e.target.value)); handleSliderInput(e) }}
+              className="emi_range"
+            />
             <div className="range_hints"><span>18</span><span>57</span></div>
           </div>
 
@@ -194,9 +197,12 @@ export default function EPFCalculator({ epfType }: Props) {
               <span className="slider_label">Years of service</span>
               <span className="slider_val">{serviceYears} years</span>
             </div>
-            <input type="range" min={1} max={35} step={1}
-              value={serviceYears} onChange={e => setServiceYears(Number(e.target.value))}
-              className="emi_range" />
+            <input
+              type="range" min={1} max={35} step={1}
+              value={serviceYears}
+              onChange={e => { setServiceYears(Number(e.target.value)); handleSliderInput(e) }}
+              className="emi_range"
+            />
             <div className="range_hints"><span>1</span><span>35</span></div>
           </div>
 
@@ -227,16 +233,15 @@ export default function EPFCalculator({ epfType }: Props) {
             </div>
           </div>
 
-          {/* How to check balance */}
           <div style={{ marginTop: "20px" }}>
             <h3 style={{ fontSize: "14px", fontWeight: "600", marginBottom: "12px" }}>
               Balance check karne ke 4 tarike:
             </h3>
             {[
-              { icon: "🌐", method: "EPFO Portal",   desc: "epfindia.gov.in → Member Passbook",    highlight: true  },
-              { icon: "📱", method: "UMANG App",      desc: "EPFO section → View Passbook",          highlight: false },
-              { icon: "📞", method: "Missed Call",    desc: "011-22901406 par missed call",          highlight: false },
-              { icon: "💬", method: "SMS",            desc: "EPFOHO UAN ENG → 7738299899",           highlight: false },
+              { icon: "🌐", method: "EPFO Portal",  desc: "epfindia.gov.in → Member Passbook", highlight: true  },
+              { icon: "📱", method: "UMANG App",     desc: "EPFO section → View Passbook",       highlight: false },
+              { icon: "📞", method: "Missed Call",   desc: "011-22901406 par missed call",       highlight: false },
+              { icon: "💬", method: "SMS",           desc: "EPFOHO UAN ENG → 7738299899",        highlight: false },
             ].map(({ icon, method, desc, highlight }) => (
               <div key={method} style={{
                 display: "flex", alignItems: "center", gap: "12px",
@@ -272,9 +277,12 @@ export default function EPFCalculator({ epfType }: Props) {
               <span className="slider_label">Current EPF balance</span>
               <span className="slider_val">{formatINR(currentBalance)}</span>
             </div>
-            <input type="range" min={10000} max={10000000} step={10000}
-              value={currentBalance} onChange={e => setCurrentBalance(Number(e.target.value))}
-              className="emi_range" />
+            <input
+              type="range" min={10000} max={10000000} step={10000}
+              value={currentBalance}
+              onChange={e => { setCurrentBalance(Number(e.target.value)); handleSliderInput(e) }}
+              className="emi_range"
+            />
             <div className="range_hints"><span>₹10K</span><span>₹1 crore</span></div>
           </div>
 
@@ -283,9 +291,12 @@ export default function EPFCalculator({ epfType }: Props) {
               <span className="slider_label">Years of service</span>
               <span className="slider_val">{serviceYears} years</span>
             </div>
-            <input type="range" min={1} max={35} step={1}
-              value={serviceYears} onChange={e => setServiceYears(Number(e.target.value))}
-              className="emi_range" />
+            <input
+              type="range" min={1} max={35} step={1}
+              value={serviceYears}
+              onChange={e => { setServiceYears(Number(e.target.value)); handleSliderInput(e) }}
+              className="emi_range"
+            />
             <div className="range_hints"><span>1 year</span><span>35 years</span></div>
           </div>
 
@@ -382,16 +393,32 @@ export default function EPFCalculator({ epfType }: Props) {
             Pension details bharein
           </h2>
 
-          <SalarySlider />
+          {/* Salary — inline */}
+          <div className="slider_group">
+            <div className="slider_top">
+              <span className="slider_label">Basic + DA salary (monthly)</span>
+              <span className="slider_val">{formatINR(salary)}</span>
+            </div>
+            <input
+              type="range" min={5000} max={200000} step={1000}
+              value={salary}
+              onChange={e => { setSalary(Number(e.target.value)); handleSliderInput(e) }}
+              className="emi_range"
+            />
+            <div className="range_hints"><span>₹5K</span><span>₹2 lakh</span></div>
+          </div>
 
           <div className="slider_group">
             <div className="slider_top">
               <span className="slider_label">Current age</span>
               <span className="slider_val">{currentAge} years</span>
             </div>
-            <input type="range" min={18} max={57} step={1}
-              value={currentAge} onChange={e => setCurrentAge(Number(e.target.value))}
-              className="emi_range" />
+            <input
+              type="range" min={18} max={57} step={1}
+              value={currentAge}
+              onChange={e => { setCurrentAge(Number(e.target.value)); handleSliderInput(e) }}
+              className="emi_range"
+            />
             <div className="range_hints"><span>18</span><span>57</span></div>
           </div>
 
@@ -400,9 +427,12 @@ export default function EPFCalculator({ epfType }: Props) {
               <span className="slider_label">Retirement age</span>
               <span className="slider_val">{retireAge} years</span>
             </div>
-            <input type="range" min={50} max={58} step={1}
-              value={retireAge} onChange={e => setRetireAge(Number(e.target.value))}
-              className="emi_range" />
+            <input
+              type="range" min={50} max={58} step={1}
+              value={retireAge}
+              onChange={e => { setRetireAge(Number(e.target.value)); handleSliderInput(e) }}
+              className="emi_range"
+            />
             <div className="range_hints"><span>50</span><span>58</span></div>
           </div>
 
@@ -470,16 +500,32 @@ export default function EPFCalculator({ epfType }: Props) {
           EPF details bharein
         </h2>
 
-        <SalarySlider />
+        {/* Salary — inline */}
+        <div className="slider_group">
+          <div className="slider_top">
+            <span className="slider_label">Basic + DA salary (monthly)</span>
+            <span className="slider_val">{formatINR(salary)}</span>
+          </div>
+          <input
+            type="range" min={5000} max={200000} step={1000}
+            value={salary}
+            onChange={e => { setSalary(Number(e.target.value)); handleSliderInput(e) }}
+            className="emi_range"
+          />
+          <div className="range_hints"><span>₹5K</span><span>₹2 lakh</span></div>
+        </div>
 
         <div className="slider_group">
           <div className="slider_top">
             <span className="slider_label">Current age</span>
             <span className="slider_val">{currentAge} years</span>
           </div>
-          <input type="range" min={18} max={57} step={1}
-            value={currentAge} onChange={e => setCurrentAge(Number(e.target.value))}
-            className="emi_range" />
+          <input
+            type="range" min={18} max={57} step={1}
+            value={currentAge}
+            onChange={e => { setCurrentAge(Number(e.target.value)); handleSliderInput(e) }}
+            className="emi_range"
+          />
           <div className="range_hints"><span>18</span><span>57</span></div>
         </div>
 
@@ -488,9 +534,12 @@ export default function EPFCalculator({ epfType }: Props) {
             <span className="slider_label">Retirement age</span>
             <span className="slider_val">{retireAge} years</span>
           </div>
-          <input type="range" min={50} max={58} step={1}
-            value={retireAge} onChange={e => setRetireAge(Number(e.target.value))}
-            className="emi_range" />
+          <input
+            type="range" min={50} max={58} step={1}
+            value={retireAge}
+            onChange={e => { setRetireAge(Number(e.target.value)); handleSliderInput(e) }}
+            className="emi_range"
+          />
           <div className="range_hints"><span>50</span><span>58</span></div>
         </div>
 
@@ -499,9 +548,12 @@ export default function EPFCalculator({ epfType }: Props) {
             <span className="slider_label">EPF interest rate</span>
             <span className="slider_val">{rate}%</span>
           </div>
-          <input type="range" min={6} max={10} step={0.05}
-            value={rate} onChange={e => setRate(Number(e.target.value))}
-            className="emi_range" />
+          <input
+            type="range" min={6} max={10} step={0.05}
+            value={rate}
+            onChange={e => { setRate(Number(e.target.value)); handleSliderInput(e) }}
+            className="emi_range"
+          />
           <div className="range_hints"><span>6%</span><span>10%</span></div>
         </div>
 
@@ -510,9 +562,12 @@ export default function EPFCalculator({ epfType }: Props) {
             <span className="slider_label">Annual salary hike</span>
             <span className="slider_val">{annualHike}%</span>
           </div>
-          <input type="range" min={0} max={20} step={1}
-            value={annualHike} onChange={e => setAnnualHike(Number(e.target.value))}
-            className="emi_range" />
+          <input
+            type="range" min={0} max={20} step={1}
+            value={annualHike}
+            onChange={e => { setAnnualHike(Number(e.target.value)); handleSliderInput(e) }}
+            className="emi_range"
+          />
           <div className="range_hints"><span>0%</span><span>20%</span></div>
         </div>
 
@@ -551,7 +606,6 @@ export default function EPFCalculator({ epfType }: Props) {
           </div>
         </div>
 
-        {/* Donut */}
         <div className="donut_row">
           <svg width="80" height="80" viewBox="0 0 80 80" style={{ flexShrink: 0 }}>
             <circle cx="40" cy="40" r="30" fill="none" stroke="#E1F5EE" strokeWidth="12" />
@@ -582,7 +636,6 @@ export default function EPFCalculator({ epfType }: Props) {
           </div>
         </div>
 
-        {/* Yearly table */}
         <table className="year_table">
           <thead>
             <tr>

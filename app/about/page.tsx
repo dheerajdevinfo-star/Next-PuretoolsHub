@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { CSSProperties } from "react";
 
 export default function AboutUs() {
@@ -61,17 +62,19 @@ export default function AboutUs() {
 
         <div className="ptc-cards" style={cardGrid}>
           {[
-            ["EMI", "Home Loan · Car Loan · Personal Loan"],
-            ["SIP & Investing", "SIP · Lumpsum · Step-Up SIP · SWP"],
-            ["Deposits", "Fixed Deposit · RD · Tax-Saver & Senior Citizen FD"],
-            ["PPF & EPF", "Interest · Balance · Withdrawal · EPS"],
-            ["Income Tax", "Tax Slab · TDS · Advance Tax · Old vs New Regime"],
-            ["Salary & GST", "CTC to In-hand · HRA · Gratuity · GST"],
-          ].map(([title, desc], i) => (
+            ["EMI", "Home Loan · Car Loan · Personal Loan",'/finance/emi'],
+            ["SIP & Investing", "SIP · Lumpsum · Step-Up SIP · SWP",'/finance/sip'],
+            ["Deposits", "Fixed Deposit · RD · Tax-Saver & Senior Citizen FD", "/finance/fd"],
+            ["PPF & EPF", "Interest · Balance · Withdrawal · EPS", "/finance/ppf"],
+            ["Income Tax", "Tax Slab · TDS · Advance Tax · Old vs New Regime", "/finance/income-tax"],
+            ["Salary & GST", "CTC to In-hand · HRA · Gratuity · GST","/finance/salary"],
+          ].map(([title, desc, link], i) => (
             <div className="ptc-card" key={title} style={card}>
+              <Link href={link}>
               <div style={cardNo}>{String(i + 1).padStart(2, "0")}</div>
               <div style={cardTitle}>{title}</div>
               <div style={cardDesc}>{desc}</div>
+              </Link>
             </div>
           ))}
         </div>

@@ -75,3 +75,10 @@ export function generateCalculatorSchema(config: SchemaCalculatorConfig, url: st
 
 export const generateEmiSchema = generateCalculatorSchema
 export const generateCiSchema = generateCalculatorSchema
+export const generateTaxSchema = generateCalculatorSchema
+export const generateSipSchema = generateCalculatorSchema
+export const generateSalarySchema = generateCalculatorSchema
+export const generatePpfSchema = generateCalculatorSchema
+export const generateFdSchema = generateCalculatorSchema
+export const generateHraSchema = generateCalculatorSchema
+export const generateEpfSchema = generateCalculatorSchema

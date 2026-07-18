@@ -4,31 +4,42 @@ import Faq from "@/components/ui/Faq"
 import RelatedTools from "@/components/ui/RelatedTools"
 import SalaryCalculator from "@/components/ui/SalaryCalculator"
 import { salaryConfig } from "@/lib/salaryData"
+import { generateSalarySchema } from "@/lib/generateSchema"
 
 const config = salaryConfig["salary"]
 
 export const metadata = {
-  title: config.title,
-  description: config.description,
+  title: config.metaTitle,
+  description: config.metaDescription,
   keywords: config.keywords,
+  alternates: {
+    canonical: "https://puretoolshub.com/finance/salary",
+  },
 }
 
-const salaryCards = [
-  { slug: "ctc-to-inhand",          emoji: "💰", key: "ctc-to-inhand"          as const },
-  { slug: "salary-hike-calculator", emoji: "📈", key: "salary-hike-calculator" as const },
-  { slug: "take-home-salary",       emoji: "🏠", key: "take-home-salary"       as const },
-  { slug: "salary-slip",            emoji: "🧾", key: "salary-slip"            as const },
-]
+ 
 
 export default function SalaryIndexPage() {
   const faqData = config.faqs.map(f => ({ question: f.q, answer: f.a }))
   const relatedToolsData = config.relatedTools.map(t => ({
-    title: t.label, description: t.label, link: t.href,
+    title: t.label,
+    description: t.description,
+    link: t.href,
   }))
+
+  const schemas = generateSalarySchema(config, "https://puretoolshub.com/finance/salary")
 
   return (
     <>
       <Breadcrumb />
+
+      {schemas.map((schema, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
 
       <section className="heding_section">
         <div className="max-width">
@@ -43,28 +54,23 @@ export default function SalaryIndexPage() {
         </div>
       </section>
 
-      <section>
+      
+
+      {/* 👇 Dynamic content blocks — driven entirely by salaryConfig */}
+      <section className="calculator_content">
         <div className="max-width">
-          <h2 className="subtitle">Aur salary tools</h2>
-          <div className="emi_index_grid">
-            {salaryCards.map(({ slug, emoji, key }) => {
-              const c = salaryConfig[key]
-              return (
-                <Link href={`/finance/salary/${slug}`} key={slug} className="emi_index_card">
-                  <span className="emi_index_emoji">{emoji}</span>
-                  <h2 className="emi_index_title">{c.title}</h2>
-                  <p className="emi_index_desc">{c.description}</p>
-                  <span className="emi_index_cta">Calculate karein →</span>
-                </Link>
-              )
-            })}
-          </div>
+          {config.content.map((section, i) => (
+            <div key={i} className="content_block">
+              <h2>{section.heading}</h2>
+              <div dangerouslySetInnerHTML={{ __html: section.body }} />
+            </div>
+          ))}
         </div>
       </section>
 
       <section className="calculator_faq">
         <div className="max-width">
-          <h2 className="hpme_faq_h2">Aksar puchhe jaane wale sawaal</h2>
+          <h2 className="hpme_faq_h2">FAQ's </h2>
           <Faq title={config.title} description={config.description} faqs={faqData} />
         </div>
       </section>

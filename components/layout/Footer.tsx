@@ -19,7 +19,7 @@ const Footer = () => {
                     priority
                   />
                 </Link>
-                <p>India ke liye free online calculators aur tools — bilkul free, koi signup nahi.</p>
+                <p>Free online calculators and tools built for everyone — no cost, no signup, no hassle.</p>
               </div>
               <div className="footer_grid_child">
                 <h4>Finance</h4>
@@ -44,8 +44,8 @@ const Footer = () => {
               <div className="footer_grid_child">
                 <h4>Company</h4>
                 <ul>
-                  <li><Link href="#">About us</Link></li>
-                  <li><Link href="#">Contact</Link></li>
+                  <li><Link href="/about">About us</Link></li>
+                  <li><Link href="/contact">Contact</Link></li>
                   <li><Link href="/privacy-policy">Privacy policy</Link></li>
                   <li><Link href="/terms">Terms of use</Link></li>
                 </ul>
@@ -54,7 +54,7 @@ const Footer = () => {
             </div>
 
             <div className="copyright">
-              <span>© 2025 PureToolsHub · Made with ❤️ in India</span> <span>All tools are free to use</span>
+              <span>© 2026 PureToolsHub · Made with ❤️ </span> <span>All tools are free to use </span>
             </div>
           </div>
         </section>
